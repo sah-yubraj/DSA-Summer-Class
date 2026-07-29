@@ -5,6 +5,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 public class SortingComparisonGUI extends JFrame {
 
@@ -43,6 +50,13 @@ public class SortingComparisonGUI extends JFrame {
     }
 
     private void generateStudents() {
+        students.clear();
+        String[] names={"ram","shyam","hari","gita","sita"};
+        Random rand = new Random();
+        for (int i = 0; i < 50; i++) {
+            students.add(new Student(i, names[rand.nextInt(names.length)], 20+rand.nextInt(75)));
+        }
+        showStudents(students);
 
     }
 
@@ -57,7 +71,7 @@ public class SortingComparisonGUI extends JFrame {
 
         long startQuick = System.nanoTime();
         quickSort(quickData,0,quickData.size()-1);
-        quickData.sort((a,b)->Integer.compare(b.marks,a.marks));
+        //quickData.sort((a,b)->Integer.compare(b.marks,a.marks));
         long endQuick = System.nanoTime();
 
         double bubbleMs = (endBubble-startBubble)/1_000_000.0;
@@ -101,16 +115,51 @@ public class SortingComparisonGUI extends JFrame {
     }
 
     private void bubbleSort(List<Student> arr){
+        int noOfPass=arr.size()-1;
+        for(int i=0;i<noOfPass;i++){
+            boolean isSwap=false;
+            for(int j=i+1;j<noOfPass-i-1;j++){
+                if (arr.get(j).marks>arr.get(j+1).marks){
+                    isSwap=true;
+                    Student tmp = arr.get(j);
+                    arr.set(j, arr.get(j+1));
+                    arr.set(j+1, tmp);
 
+                }
+            }
+
+            if (!isSwap){
+                break;
+            }
+        }
 
     }
 
     private void quickSort(List<Student> arr,int low,int high){
-
+        if(low<high){
+            int pivotindex=partition(arr,low,high);
+            quickSort(arr,low,pivotindex-1);
+            quickSort(arr,pivotindex+1,high);
+        }
 
     }
 
     private int partition(List<Student> arr,int low,int high){
+        int pivotindex=arr.get(high).marks;
+        int i = low-1;
+
+        for (int j=low; j<high; j++){
+            if (arr.get(j).marks>pivotindex){
+                i++;
+                Student tmp = arr.get(i);
+                arr.set(i, arr.get(j));
+                arr.set(j, tmp);
+            }
+        }
+        Student tmp = arr.get(i+1);
+        arr.set(i+1, arr.get(high));
+        arr.set(high, tmp);
+        return i+1;
 
     }
 
